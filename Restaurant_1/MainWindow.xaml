@@ -1,0 +1,62 @@
+﻿<Window x:Class="Restaurant_1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="My Restaurant"
+        Height="450"
+        Width="400"
+        ResizeMode="NoResize">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Menu -->
+        <GroupBox Header="Menu" Grid.Row="0">
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <RadioButton x:Name="ChickenRadioButton" Content="Chicken" IsChecked="True" Margin="0,0,10,0"/>
+                <RadioButton x:Name="EggRadioButton" Content="Egg"/>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Quantity & Submit-->
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,10,0,0">
+            <TextBlock Text="Quantity" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <TextBox x:Name="QuantityTextBox" Width="40" Text="0"/>
+
+            <Button x:Name="SubmitNewRequestButton" 
+                Content="Submit new request" 
+                Margin="10,0,0,0"
+                Click="SubmitNewRequestButton_Click"/>
+        </StackPanel>
+
+        <!-- Copy -->
+        <Button x:Name="CopyPreviousRequestButton" 
+            Content="Copy the previous request" 
+            Grid.Row="2" Margin="0,10,0,0" 
+            HorizontalAlignment="Left"
+            Click="CopyPreviousRequestButton_Click"/>
+        <!-- Prepare -->
+        <Button x:Name="PrepareFoodButton" 
+            Content="Prepare Food" 
+            Grid.Row="4" 
+            Margin="0,10,0,0" 
+            HorizontalAlignment="Left"
+            Click="PrepareFoodButton_Click"/>
+
+        <!-- Results -->
+        <StackPanel Grid.Row="5" Margin="0,10,0,0">
+            <TextBlock Text="Results" Margin="0,0,0,5"/>
+            <TextBox x:Name="ResultsTextBox" 
+                 AcceptsReturn="True" 
+                 VerticalScrollBarVisibility="Auto" 
+                 Height="225" 
+                 IsReadOnly="True"/>
+        </StackPanel>
+    </Grid>
+</Window>
