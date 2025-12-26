@@ -15,7 +15,6 @@ namespace Restaurant_1
 
         private Employee employee = new();
         private object? currentOrder = null;
-        private bool _isPrepared = false;
         private void SubmitNewRequestButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -49,18 +48,11 @@ namespace Restaurant_1
         {
             try
             {
-                if (!_isPrepared)
-                {
                     // copy and inspect new order with the same amount of food
                     currentOrder = employee.CopyRequest();
                     string inspect = employee.Inspect(currentOrder);
 
                     ResultsTextBox.Text = $"Copied previous order. \n {inspect}";
-                }
-                else
-                {
-                    ResultsTextBox.Text = $"NO last order to copy";
-                }
             }
 
             catch (Exception)
@@ -87,7 +79,6 @@ namespace Restaurant_1
             {
                 ResultsTextBox.Text = "Error: " + ex.Message;
             }
-            _isPrepared = true;
         }
     }
 }

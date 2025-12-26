@@ -6,7 +6,8 @@ namespace Restaurant_1.Classes
     internal class Employee
     {
         private object? _lastRequest;
-        private int requestCount = 0;
+        private int _requestCount = 0;
+        private bool _isPrepared = false;
 
         public Employee()
         {
@@ -15,13 +16,13 @@ namespace Restaurant_1.Classes
         // NewRequest: (ChickenOrder or EggOrder).
         public object NewRequest(int quantity, string menuItem)
         {
-
+            _isPrepared = false;
             if (quantity <= 0)
                 throw new Exception("Please make an order!");
 
-            requestCount++;
+            _requestCount++;
 
-            bool wrongOrder = (requestCount % 3 == 0);
+            bool wrongOrder = (_requestCount % 3 == 0);
 
             object request;
 
@@ -47,6 +48,7 @@ namespace Restaurant_1.Classes
         // returns ChickenOrder or EggOrder.
         public object CopyRequest()
         {
+
             if (_lastRequest == null)
                 throw new InvalidOperationException("I'm upset. There is no previous request!");
 
@@ -62,6 +64,7 @@ namespace Restaurant_1.Classes
             }
 
             _lastRequest = copy;
+            _isPrepared = false;
             return copy;
         }
 
@@ -83,22 +86,27 @@ namespace Restaurant_1.Classes
 
                 for (int i = 1; i <= total; i++)
                 {
-                    if (i % 2 == 0)
-                        continue;
-
                     int? quality = egg.GetEggQuality(); // get quality
-                    try
+
+                    if (quality.HasValue)
                     {
-                        egg.Crack(); // try to crack
-                        res += $"\nEgg No. {i} has quality: {quality}\n";
+                        try
+                        {
+                            egg.Crack(); // try to crack
+                            res += $"\nEgg No. {i} has quality: {quality}\n";
+                        }
+                        catch
+                        {
+                            res += $"\nEgg No. {i} is rotten\n";
+                        }
+                        finally
+                        {
+                            egg.DiscardShell();
+                        }
                     }
-                    catch
+                    else
                     {
-                        res += $"\nEgg No. {i} is rotten\n";
-                    }
-                    finally
-                    {
-                        egg.DiscardShell();
+                        res += $"\nEgg No. {i} quality is null\n";
                     }
                 }
 
@@ -113,6 +121,11 @@ namespace Restaurant_1.Classes
         public string PrepareFood(object order)
         {
 
+            if (_isPrepared)
+                throw new InvalidOperationException("Food has already been prepared for this order.");
+
+            string res = "";
+
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
@@ -126,16 +139,19 @@ namespace Restaurant_1.Classes
                 }
                 
                 chicken.Cook();
-                return "\nPrepared chicken: all cut up and cooked once.";
+                res += "\nPrepared chicken: all cut up and cooked once.";
             }
 
             else if (order is EggOrder egg)
             {
                 egg.Cook(); // cook eggs once
-                return "\nPrepared eggs: all shells discarded and cooked once.";
+                res = "\nPrepared eggs: all shells discarded and cooked once.";
             }
             else
                 throw new ArgumentException("Unsupported order type for preparation.", nameof(order));
+
+            _isPrepared = true;
+            return res;
         }
     }
 }

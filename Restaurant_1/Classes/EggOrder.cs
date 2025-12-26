@@ -11,6 +11,7 @@ namespace Restaurant_1.Classes
         private int _eggQty;
         private int _eggQuality;
         private static Random rand = new Random();
+        private int _instanceCount = 0;
 
         public EggOrder(int eggQty)
         {
@@ -21,12 +22,17 @@ namespace Restaurant_1.Classes
 
         public int? GetEggQuality()
         {
+            _instanceCount++;
             // Calculated once per instance of the class
             // To simulate the employee forgetting 1/2 of the time,
-                // the method should return a null value on the
-                // 2nd, 4th, 6th, etc., instances of the class.
+            // the method should return a null value on the
+            // 2nd, 4th, 6th, etc., instances of the class.
             // Generate and display a random integer between 0 and 100.
 
+            if (_instanceCount % 2 == 0)
+            {
+                return null;
+            }
             this._eggQuality = rand.Next(101);
 
             return this._eggQuality;
