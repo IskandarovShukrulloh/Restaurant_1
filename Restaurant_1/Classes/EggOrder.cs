@@ -1,68 +1,63 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Restaurant_1.Classes
+﻿namespace Restaurant_1.Classes
 {
     internal class EggOrder
     {
-        private int _eggQty;
-        private int _eggQuality;
-        private static Random rand = new Random();
-        private int _instanceCount = 0;
+        private static readonly Random RandomGenerator = new Random();
 
-        public EggOrder(int eggQty)
+        private int _eggQuantity;
+        private int _eggQuality;
+        private int _qualityCheckCount;
+
+        public EggOrder(int eggQuantity)
         {
-            this._eggQty = eggQty;
+            _eggQuantity = eggQuantity;
         }
 
-        public int GetEggQuantity() => _eggQty;
+        public int GetEggQuantity()
+        {
+            return _eggQuantity;
+        }
 
+        // Generates egg quality
+        // Returns null on every second call
         public int? GetEggQuality()
         {
-            _instanceCount++;
-            // Calculated once per instance of the class
-            // To simulate the employee forgetting 1/2 of the time,
-            // the method should return a null value on the
-            // 2nd, 4th, 6th, etc., instances of the class.
-            // Generate and display a random integer between 0 and 100.
+            _qualityCheckCount++;
 
-            if (_instanceCount % 2 == 0)
+            if (_qualityCheckCount % 2 == 0)
             {
                 return null;
             }
-            this._eggQuality = rand.Next(101);
 
-            return this._eggQuality;
+            _eggQuality = RandomGenerator.Next(0, 101);
+            return _eggQuality;
         }
 
+        // Cracks the egg
+        // Throws exception if quality is too low
         public void Crack()
         {
-            // should throw an exception if the egg quality is less than 25
-            // Should be called the number of times requested in quantity
-
-            if (this._eggQuality < 25)
+            if (_eggQuality < 25)
             {
                 throw new Exception("Egg quality is too low to crack.");
             }
         }
+
+        // Discards the eggshell
+        // Should be called once per egg
         public void DiscardShell()
         {
-            // discard eggs
-            // Should be called the number of times requested in quantity
+            // discard shell
         }
+
+        // Cooks the eggs
+        // Should be called only once
         public void Cook()
         {
-            // cook eggs
-            // Should be called once only
-            int qty = this._eggQty;
-            for (int i = 1; i <= qty; i++)
+            for (int i = 1; i <= _eggQuantity; i++)
             {
-                this.DiscardShell(); // discard shell for each egg
+                DiscardShell();
             }
-
         }
     }
 }

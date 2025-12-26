@@ -1,45 +1,48 @@
-﻿using Restaurant_1.Classes;
+﻿using System;
 using System.Windows;
+using Restaurant_1.Classes;
 
 namespace Restaurant_1
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
+
     public partial class MainWindow : Window
     {
+        private readonly Employee _employee = new Employee();
+        private object? _currentOrder;
+
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private Employee employee = new();
-        private object? currentOrder = null;
         private void SubmitNewRequestButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (QuantityTextBox.Text == "0")
+                {
                     throw new Exception("Please, make a NEW order!");
+                }
 
-                // get quantity and type of food
+                // Parse quantity and determine menu item
                 int quantity = int.Parse(QuantityTextBox.Text);
-                string menuItem = ChickenRadioButton.IsChecked == true ? "chicken" : "egg";
+                string menuItem = ChickenRadioButton.IsChecked == true
+                    ? "chicken"
+                    : "egg";
 
-                // employee makes new request
-                currentOrder = employee.NewRequest(quantity, menuItem);
+                // Create new request
+                _currentOrder = _employee.NewRequest(quantity, menuItem);
 
-                // Inspect
-                string inspect = employee.Inspect(currentOrder);
+                // Inspect the order
+                string inspectionResult = _employee.Inspect(_currentOrder);
 
-                // fill result box with current order status
-                ResultsTextBox.Text = $"New request created. {inspect}";
+                // Display result
+                ResultsTextBox.Text = $"New request created. {inspectionResult}";
                 QuantityTextBox.Text = "0";
             }
-
             catch (Exception ex)
             {
-                currentOrder = null;
+                _currentOrder = null;
                 ResultsTextBox.Text = ex.Message;
             }
         }
@@ -48,16 +51,16 @@ namespace Restaurant_1
         {
             try
             {
-                    // copy and inspect new order with the same amount of food
-                    currentOrder = employee.CopyRequest();
-                    string inspect = employee.Inspect(currentOrder);
+                // Copy and inspect the previous order
+                _currentOrder = _employee.CopyRequest();
+                string inspectionResult = _employee.Inspect(_currentOrder);
 
-                    ResultsTextBox.Text = $"Copied previous order. \n {inspect}";
+                ResultsTextBox.Text = $"Copied previous order.\n{inspectionResult}";
             }
-
             catch (Exception)
             {
-                ResultsTextBox.Text = "An error occuried! Can not copy previous order.";
+                ResultsTextBox.Text =
+                    "An error occurred! Cannot copy previous order.";
             }
         }
 
@@ -65,19 +68,18 @@ namespace Restaurant_1
         {
             try
             {
-                if (currentOrder == null)
+                if (_currentOrder == null)
                 {
                     ResultsTextBox.Text = "No order to prepare.";
                     return;
                 }
 
-                string result = employee.PrepareFood(currentOrder);
+                string result = _employee.PrepareFood(_currentOrder);
                 ResultsTextBox.Text = result;
             }
-
             catch (Exception ex)
             {
-                ResultsTextBox.Text = "Error: " + ex.Message;
+                ResultsTextBox.Text = $"Error: {ex.Message}";
             }
         }
     }

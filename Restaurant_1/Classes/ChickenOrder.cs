@@ -1,30 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Restaurant_1.Classes
+﻿namespace Restaurant_1.Classes
 {
     internal class ChickenOrder
     {
-        private int _chickenQty;
-        public ChickenOrder(int chickenQty) {
-            this._chickenQty = chickenQty;
-        }
-        public int GetChickenQty() => _chickenQty;
+        private int _chickenQuantity;
 
+        public ChickenOrder(int chickenQuantity)
+        {
+            _chickenQuantity = chickenQuantity;
+        }
+
+        public int GetChickenQuantity()
+        {
+            return _chickenQuantity;
+        }
+
+        // Cuts the chicken into portions
+        // Should be called once per chicken unit
         public void CutUp()
         {
             // cut up chicken
-            // Should be called the number of times requested in quantity
         }
 
+        // Cooks the chicken
+        // Should be called only once
         public void Cook()
         {
             // cook chicken
-            // Should be called once only
         }
-
     }
 }

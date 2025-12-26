@@ -1,103 +1,116 @@
 ﻿using System;
-using System.Text;
 
 namespace Restaurant_1.Classes
 {
     internal class Employee
     {
         private object? _lastRequest;
-        private int _requestCount = 0;
-        private bool _isPrepared = false;
+        private int _requestCount;
+        private bool _isPrepared;
 
         public Employee()
         {
         }
 
-        // NewRequest: (ChickenOrder or EggOrder).
+        // Creates a new request (ChickenOrder or EggOrder)
         public object NewRequest(int quantity, string menuItem)
         {
             _isPrepared = false;
+
             if (quantity <= 0)
+            {
                 throw new Exception("Please make an order!");
+            }
 
             _requestCount++;
 
-            bool wrongOrder = (_requestCount % 3 == 0);
-
+            bool isWrongOrder = _requestCount % 3 == 0;
             object request;
 
-            // new object based on menuItem
             if (menuItem == "chicken")
             {
-                request = wrongOrder ? new EggOrder(quantity) : new ChickenOrder(quantity);
+                request = isWrongOrder
+                    ? new EggOrder(quantity)
+                    : new ChickenOrder(quantity);
             }
             else if (menuItem == "egg")
             {
-                request = wrongOrder ? new ChickenOrder(quantity) : new EggOrder(quantity);
+                request = isWrongOrder
+                    ? new ChickenOrder(quantity)
+                    : new EggOrder(quantity);
             }
             else
             {
-                throw new ArgumentException($"Unknown menu item: '{menuItem}'", nameof(menuItem));
+                throw new ArgumentException(
+                    $"Unknown menu item: '{menuItem}'",
+                    nameof(menuItem)
+                );
             }
 
             _lastRequest = request;
             return request;
         }
 
-        // CopyRequest: new object with the same parameters as the last request.
-        // returns ChickenOrder or EggOrder.
+        // Creates a copy of the last request
         public object CopyRequest()
         {
-
             if (_lastRequest == null)
-                throw new InvalidOperationException("I'm upset. There is no previous request!");
+            {
+                throw new InvalidOperationException(
+                    "I'm upset. There is no previous request!"
+                );
+            }
 
             object copy;
 
             if (_lastRequest is ChickenOrder chicken)
             {
-                copy = new ChickenOrder(chicken.GetChickenQty());
+                copy = new ChickenOrder(chicken.GetChickenQuantity());
             }
-            else{
+            else
+            {
                 var egg = (EggOrder)_lastRequest;
                 copy = new EggOrder(egg.GetEggQuantity());
             }
 
             _lastRequest = copy;
             _isPrepared = false;
+
             return copy;
         }
 
-        // Inspect: takes ChickenOrder or EggOrder and returns result string.
+        // Inspects the given order and returns a result message
         public string Inspect(object order)
         {
             if (order == null)
+            {
                 throw new ArgumentNullException(nameof(order));
+            }
 
-            else if (order is ChickenOrder)
+            if (order is ChickenOrder)
             {
                 return "Chicken order does not require inspection.";
             }
 
-            else if (order is EggOrder egg)
+            if (order is EggOrder egg)
             {
                 int total = egg.GetEggQuantity();
-                string res = "";
+                string result = string.Empty;
 
                 for (int i = 1; i <= total; i++)
                 {
-                    int? quality = egg.GetEggQuality(); // get quality
+                    int? quality = egg.GetEggQuality();
 
                     if (quality.HasValue)
                     {
                         try
                         {
-                            egg.Crack(); // try to crack
-                            res += $"\nEgg No. {i} has quality: {quality}\n";
+                            egg.Crack();
+                            result += $"\nEgg No. {i} has quality: {quality}\n";
                         }
                         catch
                         {
-                            res += $"\nEgg No. {i} is rotten\n";
+                            result += $"\nEgg No. {i} is rotten\n";
                         }
                         finally
                         {
@@ -106,52 +119,63 @@ namespace Restaurant_1.Classes
                     }
                     else
                     {
-                        res += $"\nEgg No. {i} quality is null\n";
+                        result += $"\nEgg No. {i} quality is null\n";
                     }
                 }
 
-                return res;
+                return result;
             }
-            else
-            {
-                throw new ArgumentException("Unsupported order type for inspection.", nameof(order));
-            }
+
+            throw new ArgumentException(
+                "Unsupported order type for inspection.",
+                nameof(order)
+            );
         }
 
+        // Prepares the given order
         public string PrepareFood(object order)
         {
-
             if (_isPrepared)
-                throw new InvalidOperationException("Food has already been prepared for this order.");
-
-            string res = "";
+            {
+                throw new InvalidOperationException(
+                    "Food has already been prepared for this order."
+                );
+            }
 
             if (order == null)
-                throw new ArgumentNullException(nameof(order));
-
-            else if (order is ChickenOrder chicken)
             {
-                int qty = chicken.GetChickenQty();
+                throw new ArgumentNullException(nameof(order));
+            }
 
-                for (int i = 1; i <= qty; i++)
+            string result;
+
+            if (order is ChickenOrder chicken)
+            {
+                int quantity = chicken.GetChickenQuantity();
+
+                for (int i = 1; i <= quantity; i++)
                 {
                     chicken.CutUp();
                 }
-                
-                chicken.Cook();
-                res += "\nPrepared chicken: all cut up and cooked once.";
-            }
 
+                chicken.Cook();
+                result = "\nPrepared chicken: all cut up and cooked once.";
+            }
             else if (order is EggOrder egg)
             {
-                egg.Cook(); // cook eggs once
-                res = "\nPrepared eggs: all shells discarded and cooked once.";
+                egg.Cook();
+                result = "\nPrepared eggs: all shells discarded and cooked once.";
             }
             else
-                throw new ArgumentException("Unsupported order type for preparation.", nameof(order));
+            {
+                throw new ArgumentException(
+                    "Unsupported order type for preparation.",
+                    nameof(order)
+                );
+            }
 
             _isPrepared = true;
-            return res;
+            return result;
         }
     }
 }
